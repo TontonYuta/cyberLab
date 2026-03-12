@@ -1,4 +1,4 @@
-package com.TontonYuta.cyberlab;
+package com.TontonYuta.cyberLab;
 
 import com.getcapacitor.BridgeActivity;
 

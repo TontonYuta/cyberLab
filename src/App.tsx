@@ -3,11 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
-  Terminal, 
   BookOpen, 
-  Usb, 
   Monitor, 
   Cpu, 
   Shield, 
@@ -26,8 +24,13 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { ALL_MODULES } from './data/sessions';
 import { Session, Module } from './types';
+import { COURSE_CONFIG } from './config';
 
 export default function App() {
+  useEffect(() => {
+    document.title = COURSE_CONFIG.appName;
+  }, []);
+
   const [activeSession, setActiveSession] = useState<Session>(ALL_MODULES[0].sessions[0]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -67,13 +70,22 @@ export default function App() {
     })).filter(module => module.sessions.length > 0);
   }, [searchQuery]);
 
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'Theory': return <BookOpen size={14} />;
-      case 'Practice': return <Code size={14} />;
-      case 'Lab': return <Monitor size={14} />;
-      case 'Assembly': return <Cpu size={14} />;
-      default: return <Shield size={14} />;
+  const handleShare = async () => {
+    const shareData = {
+      title: COURSE_CONFIG.appName,
+      text: `Cùng học ${COURSE_CONFIG.appName} với mình nhé!`,
+      url: window.location.href,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        alert('Đã sao chép đường dẫn vào clipboard!');
+      }
+    } catch (err) {
+      console.error('Lỗi khi chia sẻ:', err);
     }
   };
 
@@ -104,10 +116,10 @@ export default function App() {
           >
             <div className="p-6 border-b border-[#1F1F1F] flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-[#00FF41] rounded flex items-center justify-center">
-                  <Terminal size={20} className="text-black" />
+                <div className="w-8 h-8 rounded flex items-center justify-center" style={{ backgroundColor: COURSE_CONFIG.themeColor }}>
+                  <COURSE_CONFIG.appIcon size={20} className="text-black" />
                 </div>
-                <h1 className="font-bold text-sm tracking-tighter uppercase">CyberLab 100</h1>
+                <h1 className="font-bold text-sm tracking-tighter uppercase">{COURSE_CONFIG.appName}</h1>
               </div>
               <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-gray-500 hover:text-white">
                 <X size={20} />
@@ -119,10 +131,11 @@ export default function App() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
                 <input 
                   type="text"
-                  placeholder="Tìm kiếm buổi học..."
+                  placeholder={COURSE_CONFIG.labels.searchPlaceholder}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-black border border-[#1F1F1F] rounded-md py-2 pl-9 pr-4 text-xs focus:outline-none focus:border-[#00FF41] transition-colors"
+                  className="w-full bg-black border border-[#1F1F1F] rounded-md py-2 pl-9 pr-4 text-xs focus:outline-none transition-colors"
+                  style={{ '--tw-ring-color': COURSE_CONFIG.themeColor, outlineColor: COURSE_CONFIG.themeColor } as React.CSSProperties}
                 />
               </div>
             </div>
@@ -141,20 +154,23 @@ export default function App() {
                         onClick={() => handleSessionChange(session)}
                         className={`w-full flex items-center gap-3 p-2.5 rounded text-left transition-all ${
                           activeSession.id === session.id 
-                            ? 'bg-[#00FF41]/10 text-[#00FF41] border-l-2 border-[#00FF41]' 
+                            ? 'bg-white/5 border-l-2' 
                             : 'hover:bg-[#1A1A1A] text-gray-400 border-l-2 border-transparent'
                         }`}
+                        style={activeSession.id === session.id ? { color: COURSE_CONFIG.themeColor, borderColor: COURSE_CONFIG.themeColor } : {}}
                       >
                         <div className={`w-8 h-8 rounded flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                          activeSession.id === session.id ? 'bg-[#00FF41] text-black' : 'bg-[#1F1F1F] text-gray-500'
-                        }`}>
+                          activeSession.id === session.id ? 'text-black' : 'bg-[#1F1F1F] text-gray-500'
+                        }`}
+                        style={activeSession.id === session.id ? { backgroundColor: COURSE_CONFIG.themeColor } : {}}
+                        >
                           {session.day}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="text-[11px] font-bold truncate">{session.title}</div>
                           <div className="flex items-center gap-2 mt-0.5">
                             <span className="text-[9px] opacity-60 flex items-center gap-1">
-                              {getCategoryIcon(session.category)}
+                              {COURSE_CONFIG.getCategoryIcon(session.category)}
                               {session.category}
                             </span>
                           </div>
@@ -168,11 +184,11 @@ export default function App() {
 
             <div className="p-4 border-t border-[#1F1F1F] bg-[#0A0A0A]">
               <div className="flex items-center justify-between text-[10px] text-gray-500 uppercase tracking-widest mb-2">
-                <span>Tiến độ học tập</span>
+                <span>{COURSE_CONFIG.labels.progress}</span>
                 <span>{progressPercentage}%</span>
               </div>
               <div className="w-full h-1 bg-[#1F1F1F] rounded-full overflow-hidden">
-                <div className="h-full bg-[#00FF41] transition-all duration-500" style={{ width: `${progressPercentage}%` }} />
+                <div className="h-full transition-all duration-500" style={{ width: `${progressPercentage}%`, backgroundColor: COURSE_CONFIG.themeColor }} />
               </div>
             </div>
           </motion.aside>
@@ -185,25 +201,28 @@ export default function App() {
         <header className="h-16 border-b border-[#1F1F1F] bg-[#0F0F0F]/80 backdrop-blur flex items-center px-4 md:px-6 justify-between shrink-0">
           <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
             {!isSidebarOpen && (
-              <button onClick={() => setIsSidebarOpen(true)} className="p-2 hover:bg-[#1F1F1F] rounded text-[#00FF41] shrink-0">
+              <button onClick={() => setIsSidebarOpen(true)} className="p-2 hover:bg-[#1F1F1F] rounded shrink-0" style={{ color: COURSE_CONFIG.themeColor }}>
                 <Menu size={20} />
               </button>
             )}
             <div className="flex items-center gap-2 text-[10px] md:text-xs text-gray-400 overflow-hidden">
               <Calendar size={14} className="shrink-0 hidden xs:block" />
-              <span className="font-bold text-[#00FF41] shrink-0">BUỔI {activeSession.day}</span>
+              <span className="font-bold shrink-0" style={{ color: COURSE_CONFIG.themeColor }}>{COURSE_CONFIG.labels.sessionPrefix} {activeSession.day}</span>
               <ChevronRight size={14} className="shrink-0" />
               <span className="truncate">{activeSession.title}</span>
             </div>
           </div>
           <div className="flex items-center gap-2 md:gap-3 shrink-0">
-            <button className="hidden sm:block px-3 py-1.5 bg-[#1F1F1F] hover:bg-[#2A2A2A] border border-[#333] rounded text-[10px] font-bold uppercase tracking-widest transition-all">
-              Tài liệu PDF
+            <button 
+              onClick={handleShare}
+              className="hidden sm:block px-3 py-1.5 bg-[#1F1F1F] hover:bg-[#2A2A2A] border border-[#333] rounded text-[10px] font-bold uppercase tracking-widest transition-all"
+            >
+              {COURSE_CONFIG.labels.actionButton}
             </button>
             <div className="hidden sm:block w-px h-4 bg-[#1F1F1F]" />
             <div className="flex items-center gap-2 px-2 md:px-3 py-1 bg-[#1F1F1F] rounded-full">
-              <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-[#00FF41] rounded-full" />
-              <span className="text-[8px] md:text-[10px] uppercase tracking-widest text-gray-400">Offline</span>
+              <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full" style={{ backgroundColor: COURSE_CONFIG.themeColor }} />
+              <span className="text-[8px] md:text-[10px] uppercase tracking-widest text-gray-400">{COURSE_CONFIG.labels.status}</span>
             </div>
           </div>
         </header>
@@ -218,8 +237,8 @@ export default function App() {
           >
             {/* Hero Section */}
             <div className="space-y-4 md:space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00FF41]/10 border border-[#00FF41]/20 text-[#00FF41] text-[10px] font-bold uppercase tracking-widest">
-                {getCategoryIcon(activeSession.category)}
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest" style={{ color: COURSE_CONFIG.themeColor, borderColor: `${COURSE_CONFIG.themeColor}33`, backgroundColor: `${COURSE_CONFIG.themeColor}1A` }}>
+                {COURSE_CONFIG.getCategoryIcon(activeSession.category)}
                 {activeSession.category}
               </div>
               <h2 className="text-2xl md:text-4xl font-bold tracking-tighter text-white leading-tight">
@@ -240,22 +259,23 @@ export default function App() {
             {/* Commands */}
             {activeSession.commands && activeSession.commands.length > 0 && (
               <div className="space-y-6">
-                <div className="flex items-center gap-3 text-[#00FF41]">
+                <div className="flex items-center gap-3" style={{ color: COURSE_CONFIG.themeColor }}>
                   <CommandIcon size={20} />
-                  <h3 className="text-sm font-bold uppercase tracking-[0.2em]">Terminal Commands</h3>
+                  <h3 className="text-sm font-bold uppercase tracking-[0.2em]">{COURSE_CONFIG.labels.commands}</h3>
                 </div>
                 <div className="grid gap-4">
                   {activeSession.commands.map((cmd, idx) => (
-                    <div key={idx} className="group bg-[#0F0F0F] border border-[#1F1F1F] rounded-lg overflow-hidden hover:border-[#00FF41]/30 transition-all">
+                    <div key={idx} className="group bg-[#0F0F0F] border border-[#1F1F1F] rounded-lg overflow-hidden transition-all" style={{ '--tw-border-opacity': 0.3 } as React.CSSProperties}>
                       <div className="p-3 bg-[#151515] border-b border-[#1F1F1F] flex justify-between items-center">
-                        <span className="text-xs font-bold text-[#00FF41]">{cmd.name}</span>
+                        <span className="text-xs font-bold" style={{ color: COURSE_CONFIG.themeColor }}>{cmd.name}</span>
                         <span className="text-[10px] text-gray-500 italic">{cmd.description}</span>
                       </div>
                       <div className="p-5 bg-black font-mono text-sm text-gray-300 relative">
                         <code className="block">$ {cmd.usage}</code>
                         <button 
                           onClick={() => navigator.clipboard.writeText(cmd.usage)}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 p-2 opacity-0 group-hover:opacity-100 bg-[#1F1F1F] rounded hover:text-[#00FF41] transition-all"
+                          className="absolute right-4 top-1/2 -translate-y-1/2 p-2 opacity-0 group-hover:opacity-100 bg-[#1F1F1F] rounded transition-all"
+                          style={{ color: COURSE_CONFIG.themeColor }}
                         >
                           <Code size={14} />
                         </button>
@@ -271,7 +291,7 @@ export default function App() {
               <div className="space-y-6">
                 <div className="flex items-center gap-3 text-yellow-500">
                   <Shield size={20} />
-                  <h3 className="text-sm font-bold uppercase tracking-[0.2em]">Thực hành Lab</h3>
+                  <h3 className="text-sm font-bold uppercase tracking-[0.2em]">{COURSE_CONFIG.labels.exercises}</h3>
                 </div>
                 {activeSession.exercises.map((ex, idx) => (
                   <div key={idx} className="bg-[#151515] border border-yellow-900/20 rounded-2xl p-4 md:p-8 space-y-6">
@@ -281,8 +301,12 @@ export default function App() {
                     </div>
                     <div className="grid gap-3">
                       {ex.steps.map((step, sIdx) => (
-                        <div key={sIdx} className="flex items-start gap-3 md:gap-4 p-3 md:p-4 bg-black/40 rounded-xl border border-white/5 group hover:border-[#00FF41]/20 transition-all">
-                          <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-[#1F1F1F] group-hover:bg-[#00FF41] group-hover:text-black flex items-center justify-center text-[9px] md:text-[10px] font-bold shrink-0 transition-all">
+                        <div key={sIdx} className="flex items-start gap-3 md:gap-4 p-3 md:p-4 bg-black/40 rounded-xl border border-white/5 group transition-all">
+                          <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-[#1F1F1F] group-hover:text-black flex items-center justify-center text-[9px] md:text-[10px] font-bold shrink-0 transition-all"
+                               style={{ '--tw-bg-opacity': 1 } as React.CSSProperties}
+                               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = COURSE_CONFIG.themeColor}
+                               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#1F1F1F'}
+                          >
                             {sIdx + 1}
                           </div>
                           <span className="text-xs md:text-sm text-gray-300 leading-relaxed">{step}</span>
@@ -291,13 +315,13 @@ export default function App() {
                     </div>
                     <button 
                       onClick={() => toggleCompletion(activeSession.id)}
-                      className={`w-full py-4 border rounded-xl text-xs font-bold uppercase tracking-[0.2em] transition-all ${
-                        completedSessions.has(activeSession.id)
-                          ? 'bg-[#00FF41] text-black border-[#00FF41]'
-                          : 'bg-[#00FF41]/5 hover:bg-[#00FF41]/10 border-[#00FF41]/20 text-[#00FF41]'
-                      }`}
+                      className={`w-full py-4 border rounded-xl text-xs font-bold uppercase tracking-[0.2em] transition-all`}
+                      style={completedSessions.has(activeSession.id) 
+                        ? { backgroundColor: COURSE_CONFIG.themeColor, color: 'black', borderColor: COURSE_CONFIG.themeColor }
+                        : { backgroundColor: `${COURSE_CONFIG.themeColor}0D`, color: COURSE_CONFIG.themeColor, borderColor: `${COURSE_CONFIG.themeColor}33` }
+                      }
                     >
-                      {completedSessions.has(activeSession.id) ? 'Đã hoàn thành' : 'Hoàn thành thử thách'}
+                      {completedSessions.has(activeSession.id) ? COURSE_CONFIG.labels.exerciseCompleted : COURSE_CONFIG.labels.exerciseComplete}
                     </button>
                   </div>
                 ))}
@@ -309,7 +333,7 @@ export default function App() {
               <div className="space-y-6">
                 <div className="flex items-center gap-3 text-purple-500">
                   <HelpCircle size={20} />
-                  <h3 className="text-sm font-bold uppercase tracking-[0.2em]">Kiểm tra kiến thức</h3>
+                  <h3 className="text-sm font-bold uppercase tracking-[0.2em]">{COURSE_CONFIG.labels.quizzes}</h3>
                 </div>
                 {activeSession.quizzes.map((quiz, qIdx) => {
                   const isSubmitted = submittedQuizzes.has(qIdx);
@@ -364,7 +388,7 @@ export default function App() {
                           onClick={() => setSubmittedQuizzes(prev => new Set(prev).add(qIdx))}
                           className="w-full py-3 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 disabled:hover:bg-purple-600 text-white rounded-xl text-xs font-bold uppercase tracking-[0.2em] transition-all"
                         >
-                          Kiểm tra đáp án
+                          {COURSE_CONFIG.labels.quizCheck}
                         </button>
                       ) : (
                         <motion.div
@@ -373,7 +397,7 @@ export default function App() {
                           className={`p-4 rounded-xl text-sm ${isCorrect ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}
                         >
                           <div className="font-bold mb-1">
-                            {isCorrect ? 'Chính xác!' : 'Chưa đúng rồi.'}
+                            {isCorrect ? COURSE_CONFIG.labels.quizCorrect : COURSE_CONFIG.labels.quizIncorrect}
                           </div>
                           {quiz.explanation && (
                             <div className="text-gray-400 text-xs mt-2 leading-relaxed">
@@ -389,15 +413,17 @@ export default function App() {
             )}
 
             {/* Warning Footer */}
-            <div className="p-6 bg-red-950/10 border border-red-900/20 rounded-2xl flex gap-4 items-start">
-              <AlertTriangle size={24} className="text-red-500 shrink-0" />
-              <div className="space-y-1">
-                <h5 className="text-xs font-bold text-red-500 uppercase tracking-widest">An toàn là trên hết</h5>
-                <p className="text-[11px] text-gray-500 leading-relaxed">
-                  Mọi hành động tấn công mạng không có sự cho phép là vi phạm pháp luật. CyberLab 100 chỉ phục vụ mục đích giáo dục và nghiên cứu trong môi trường Lab ảo cô lập.
-                </p>
+            {COURSE_CONFIG.warning.enabled && (
+              <div className="p-6 bg-red-950/10 border border-red-900/20 rounded-2xl flex gap-4 items-start">
+                <AlertTriangle size={24} className="text-red-500 shrink-0" />
+                <div className="space-y-1">
+                  <h5 className="text-xs font-bold text-red-500 uppercase tracking-widest">{COURSE_CONFIG.warning.title}</h5>
+                  <p className="text-[11px] text-gray-500 leading-relaxed">
+                    {COURSE_CONFIG.warning.message}
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
           </motion.div>
         </div>
       </main>

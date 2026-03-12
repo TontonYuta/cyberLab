@@ -1,130 +1,199 @@
-# CyberLab 100
+# 🚀 Nền tảng Học tập Trực tuyến (Course App Template)
 
-CyberLab 100 là một nền tảng học tập trực tuyến về An toàn thông tin (Cybersecurity) được thiết kế với giao diện mang phong cách hacker (hacker aesthetic). Ứng dụng cung cấp các bài học từ cơ bản đến nâng cao, kết hợp với các bài thực hành (Lab) và dự án thực tế.
+Đây là một template ứng dụng học tập trực tuyến linh hoạt, giao diện hiện đại (Dark Mode mặc định), được thiết kế để bạn có thể **tạo ra một ứng dụng dạy học cho bất kỳ môn học nào** (Tiếng Anh, Lập trình, Toán học, Kỹ năng mềm...) mà **không cần phải sửa code giao diện**.
 
-## 1. Hướng dẫn học tập
+Mọi thứ từ màu sắc, tên ứng dụng, icon cho đến các tiêu đề nút bấm đều được quản lý tập trung tại một file cấu hình duy nhất.
 
-Để đạt hiệu quả tốt nhất khi học với CyberLab 100, bạn nên:
-- **Học theo lộ trình:** Bắt đầu từ Module 1 và tiến dần đến các Module tiếp theo. Các kiến thức được xây dựng dựa trên nhau.
-- **Thực hành liên tục:** Đừng chỉ đọc lý thuyết. Hãy mở Terminal/Command Prompt và gõ lại các lệnh được hướng dẫn trong phần "Terminal Commands".
-- **Làm bài tập Lab:** Các bài tập Lab là cơ hội để bạn áp dụng kiến thức vào thực tế. Hãy cố gắng tự hoàn thành trước khi xem đáp án.
-- **Kiểm tra kiến thức:** Cuối mỗi bài học hoặc module sẽ có phần Quiz. Hãy làm để ôn tập lại những gì đã học.
-- **An toàn là trên hết:** Chỉ thực hành tấn công trên các môi trường giả lập (như máy ảo của bạn, OWASP Juice Shop, v.v.). Không bao giờ tấn công các hệ thống thực tế mà không có sự cho phép.
+---
 
-## 2. Cập nhật nội dung bài học
+## ✨ Tính năng nổi bật
 
-Nội dung bài học được lưu trữ dưới dạng các object TypeScript trong thư mục `src/data/sessions/`.
+- 🎨 **Tùy chỉnh 100% qua Config:** Đổi môn học, đổi màu sắc, đổi icon chỉ trong 1 file.
+- 📱 **Responsive Design:** Hoạt động hoàn hảo trên cả Máy tính, Máy tính bảng và Điện thoại.
+- 📊 **Theo dõi tiến độ:** Tự động tính toán % hoàn thành khóa học dựa trên các bài tập đã làm.
+- 📝 **Hỗ trợ đa dạng nội dung:** Lý thuyết, Bảng lệnh (Commands/Từ vựng), Bài tập từng bước (Exercises), và Trắc nghiệm (Quizzes) có giải thích đáp án.
+- 🚀 **Sẵn sàng cho Mobile:** Tích hợp sẵn hướng dẫn build thành file APK cho Android.
 
-Để cập nhật nội dung một bài học hiện có:
-1. Mở file tương ứng với module chứa bài học đó (ví dụ: `src/data/sessions/module1.ts`).
-2. Tìm đến bài học (session) bạn muốn sửa thông qua thuộc tính `id` hoặc `title`.
-3. Chỉnh sửa các trường nội dung như `title`, `description`, `content`, `commands`, `exercises`, hoặc `quizzes`.
-4. Lưu file. Ứng dụng sẽ tự động cập nhật nội dung mới.
+---
 
-Ví dụ cấu trúc một bài học:
+## 📂 Cấu trúc thư mục quan trọng
+
+Bạn chỉ cần quan tâm đến 2 thư mục chính để tùy chỉnh ứng dụng:
+
+```text
+src/
+├── config.ts              <-- ⚙️ NƠI ĐỔI TÊN MÔN HỌC, MÀU SẮC, ICON
+└── data/
+    ├── sessions.ts        <-- 📚 Nơi khai báo danh sách các Chương (Modules)
+    └── sessions/          <-- 📄 Nơi chứa nội dung chi tiết của từng bài học
+        ├── module1.ts
+        ├── module2.ts
+        └── ...
+```
+
+---
+
+## 🛠️ BƯỚC 1: Tùy chỉnh Ứng dụng (Đổi môn học)
+
+Mở file `src/config.ts`. Đây là "trái tim" của template. Bạn hãy thay đổi các giá trị trong này để biến ứng dụng thành môn học của bạn.
+
+**Ví dụ: Biến app thành ứng dụng học Tiếng Anh (English Mastery)**
+
+```typescript
+import { BookA, BookOpen, Headphones, PenTool, MessageCircle } from 'lucide-react';
+
+export const COURSE_CONFIG = {
+  appName: "English Mastery",       // Tên ứng dụng
+  appIcon: BookA,                   // Icon chính (lấy từ lucide-react)
+  themeColor: "#3B82F6",            // Màu chủ đạo (VD: Xanh dương)
+  
+  labels: {
+    searchPlaceholder: "Tìm kiếm bài học...",
+    progress: "Tiến độ học tập",
+    sessionPrefix: "BÀI",           // Thay vì "BUỔI"
+    actionButton: "Chia sẻ",        // Thay cho nút Tài liệu PDF
+    status: "Offline",
+    commands: "Từ vựng mới",        // Đổi "Terminal Commands" thành "Từ vựng"
+    exercises: "Bài tập thực hành", // Đổi "Thực hành Lab" thành "Bài tập"
+    exerciseComplete: "Đánh dấu hoàn thành",
+    exerciseCompleted: "Đã hoàn thành",
+    quizzes: "Kiểm tra ngữ pháp",
+    quizCheck: "Kiểm tra đáp án",
+    quizCorrect: "Chính xác! 🎉",
+    quizIncorrect: "Chưa đúng rồi, thử lại nhé.",
+  },
+
+  warning: {
+    enabled: false, // Tắt cảnh báo an ninh mạng vì học Tiếng Anh không cần
+    title: "",
+    message: ""
+  },
+
+  getCategoryIcon: (category: string) => {
+    // Tùy chỉnh icon cho các loại bài học của bạn
+    switch (category) {
+      case 'Grammar': return <BookOpen size={14} />;
+      case 'Vocabulary': return <PenTool size={14} />;
+      case 'Listening': return <Headphones size={14} />;
+      case 'Speaking': return <MessageCircle size={14} />;
+      default: return <BookOpen size={14} />;
+    }
+  }
+};
+```
+
+---
+
+## 📝 BƯỚC 2: Viết nội dung bài học
+
+Nội dung bài học được lưu trong thư mục `src/data/sessions/`. Mỗi file đại diện cho một Chương (Module) chứa nhiều Bài học (Sessions).
+
+Dưới đây là **Template chuẩn của một Bài học (Session)** để bạn copy-paste:
+
 ```typescript
 {
-  id: 'session-id',
-  day: 1,
-  category: 'Theory', // 'Theory' | 'Practice' | 'Lab' | 'Assembly'
-  title: 'Tên bài học',
-  description: 'Mô tả ngắn gọn',
-  content: 'Nội dung chi tiết của bài học (có thể dùng markdown hoặc text thuần)',
+  id: 'bai-1-id-duy-nhat',
+  day: 1, // Số thứ tự bài học
+  category: 'Grammar', // Thể loại (sẽ map với getCategoryIcon ở config.ts)
+  title: 'Thì Hiện Tại Đơn (Present Simple)',
+  description: 'Học cách diễn tả thói quen và sự thật hiển nhiên.',
+  
+  // 1. NỘI DUNG CHÍNH (Hỗ trợ xuống dòng bằng \n)
+  content: `Thì hiện tại đơn được dùng để diễn tả:
+1. Một thói quen lặp đi lặp lại.
+2. Một sự thật hiển nhiên.
+
+Cấu trúc: S + V(s/es) + O`,
+
+  // 2. DANH SÁCH TỪ VỰNG / LỆNH (Tùy chọn)
   commands: [
-    { name: 'Tên lệnh', description: 'Mô tả lệnh', usage: 'cú pháp lệnh' }
+    { 
+      name: 'Always', 
+      description: 'Trạng từ chỉ tần suất', 
+      usage: 'I always wake up at 6 AM.' 
+    },
+    { 
+      name: 'Usually', 
+      description: 'Trạng từ chỉ tần suất', 
+      usage: 'She usually goes to school by bus.' 
+    }
   ],
+
+  // 3. BÀI TẬP TỪNG BƯỚC (Tùy chọn)
   exercises: [
-    { title: 'Tên bài tập', description: 'Mô tả', steps: ['Bước 1', 'Bước 2'] }
+    {
+      title: 'Luyện tập chia động từ',
+      description: 'Làm theo các bước sau để hoàn thành bài tập',
+      steps: [
+        'Đọc kỹ chủ ngữ của câu (Số ít hay số nhiều?).',
+        'Thêm "s" hoặc "es" nếu chủ ngữ là ngôi thứ 3 số ít (He, She, It).',
+        'Kiểm tra lại câu hoàn chỉnh.'
+      ]
+    }
   ],
+
+  // 4. TRẮC NGHIỆM (Tùy chọn)
   quizzes: [
     {
-      question: 'Câu hỏi?',
+      question: 'Chọn đáp án đúng: He ___ to the gym every day.',
       options: [
-        { id: 'A', text: 'Lựa chọn A', isCorrect: true },
-        { id: 'B', text: 'Lựa chọn B' }
+        { id: 'A', text: 'go', isCorrect: false },
+        { id: 'B', text: 'goes', isCorrect: true },
+        { id: 'C', text: 'going', isCorrect: false }
       ],
-      explanation: 'Giải thích đáp án'
+      explanation: 'Vì chủ ngữ là "He" (ngôi thứ 3 số ít) nên động từ "go" phải thêm "es".'
     }
   ]
 }
 ```
 
-## 3. Thêm bài học mới
+---
 
-Để thêm một bài học mới vào một module hiện có:
-1. Mở file module tương ứng (ví dụ: `src/data/sessions/module1.ts`).
-2. Thêm một object bài học mới vào mảng `sessions` của module đó, tuân theo cấu trúc như ở phần 2.
-3. Đảm bảo `id` của bài học là duy nhất.
+## 📚 BƯỚC 3: Quản lý các Chương (Modules)
 
-Để thêm một **Module mới**:
-1. Tạo một file mới trong `src/data/sessions/` (ví dụ: `module6.ts`).
-2. Định nghĩa và export module mới:
-   ```typescript
-   import { Module } from '../../types';
-   export const MODULE_6: Module = {
-     id: 'module-6',
-     title: 'Tên Module Mới',
-     sessions: [ /* các bài học */ ]
-   };
-   ```
-3. Mở file `src/data/sessions.ts`.
-4. Import module mới và thêm vào mảng `ALL_MODULES`:
-   ```typescript
-   import { MODULE_6 } from './sessions/module6';
-   // ...
-   export const ALL_MODULES: Module[] = [
-     MODULE_1,
-     // ...
-     MODULE_6
-   ];
-   ```
+Sau khi tạo xong file nội dung (VD: `src/data/sessions/module_grammar.ts`), bạn cần khai báo nó để ứng dụng nhận diện.
 
-## 4. Cách Build thành ứng dụng di động (APK)
+Mở file `src/data/sessions.ts` và thêm module của bạn vào mảng `ALL_MODULES`:
 
-Vì CyberLab 100 được xây dựng bằng React (Vite) dưới dạng một ứng dụng web (SPA), bạn có thể dễ dàng chuyển đổi nó thành ứng dụng Android (APK) bằng **Capacitor**.
+```typescript
+import { MODULE_GRAMMAR } from './sessions/module_grammar';
+import { MODULE_VOCAB } from './sessions/module_vocab';
 
-**Bước 1: Build ứng dụng web**
-Chạy lệnh sau để tạo thư mục `dist` chứa code đã được tối ưu hóa:
+export const ALL_MODULES: Module[] = [
+  MODULE_GRAMMAR,
+  MODULE_VOCAB,
+  // Thêm các module khác vào đây...
+];
+```
+
+---
+
+## 📱 BƯỚC 4: Xuất bản ứng dụng (Build)
+
+### 1. Build thành trang web (Web App)
+Chạy lệnh sau để tạo thư mục `dist` chứa code đã được tối ưu hóa để đưa lên hosting (Vercel, Netlify, GitHub Pages...):
 ```bash
 npm run build
 ```
 
-**Bước 2: Cài đặt Capacitor**
-Cài đặt Capacitor CLI và các thư viện core:
+### 2. Build thành ứng dụng Android (APK)
+Template này đã sẵn sàng để chuyển đổi thành App Android bằng **Capacitor**.
+
+**Cài đặt lần đầu:**
 ```bash
 npm install @capacitor/core
 npm install @capacitor/cli --save-dev
-```
-
-**Bước 3: Khởi tạo Capacitor**
-```bash
-npx cap init
-```
-- Tên ứng dụng: `CyberLab 100`
-- App ID: `com.cyberlab.app` (hoặc tên miền của bạn)
-- Web asset directory: `dist`
-
-**Bước 4: Thêm nền tảng Android**
-Cài đặt package Android cho Capacitor:
-```bash
+npx cap init "Tên App Của Bạn" "com.tenban.app" --web-dir dist
 npm install @capacitor/android
 npx cap add android
 ```
 
-**Bước 5: Đồng bộ code web sang Android**
-Mỗi khi bạn build lại web (`npm run build`), hãy chạy lệnh này để copy code mới sang thư mục Android:
-```bash
-npx cap sync
-```
+**Mỗi khi bạn cập nhật nội dung mới:**
+1. Build lại web: `npm run build`
+2. Đồng bộ sang Android: `npx cap sync`
+3. Mở Android Studio để xuất file APK: `npx cap open android`
+   *(Trong Android Studio: Chọn Build > Build Bundle(s) / APK(s) > Build APK(s))*
 
-**Bước 6: Build APK**
-Mở project Android bằng Android Studio:
-```bash
-npx cap open android
-```
-Trong Android Studio:
-1. Đợi Gradle sync xong.
-2. Chọn **Build** > **Build Bundle(s) / APK(s)** > **Build APK(s)**.
-3. Sau khi build xong, Android Studio sẽ hiện thông báo có link để mở thư mục chứa file `.apk`.
+---
 
-*(Lưu ý: Bạn cần cài đặt sẵn Android Studio và Android SDK trên máy tính để thực hiện bước 6).*
+🎉 **Chúc bạn tạo ra những ứng dụng học tập tuyệt vời!**

@@ -31,7 +31,7 @@ export interface Session {
   commands?: Command[];
   exercises?: Exercise[];
   quizzes?: Quiz[];
-  category: 'Theory' | 'Practice' | 'Lab' | 'Assembly';
+  category: string;
 }
 
 export interface Module {
