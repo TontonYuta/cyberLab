@@ -1,44 +1,57 @@
-import { Terminal, BookOpen, Code, Monitor, Cpu, Shield } from 'lucide-react';
+import { Network, BookOpen, Code, Server, Radio, Shield } from 'lucide-react';
 import React from 'react';
 
 export const COURSE_CONFIG = {
   // Thông tin chung của khóa học
-  appName: "CyberLab 100",
-  appIcon: Terminal, // Icon chính của ứng dụng (từ lucide-react)
-  themeColor: "#00FF41", // Màu chủ đạo (mặc định là xanh hacker)
+  appName: "Lập Trình Mạng Máy Tính",
+  appIcon: Network, // Icon chính của ứng dụng
+  themeColor: "#2563EB", // Xanh dương hiện đại, dễ nhìn, hợp chủ đề công nghệ
   
-  // Cấu hình các nhãn (labels) hiển thị trên UI
+  // Các nhãn hiển thị trên giao diện
   labels: {
-    searchPlaceholder: "Tìm kiếm bài học...",
+    searchPlaceholder: "Tìm kiếm bài học về mạng...",
     progress: "Tiến độ học tập",
-    sessionPrefix: "BUỔI",
+    sessionPrefix: "BÀI",
     actionButton: "Chia sẻ",
-    status: "Offline",
-    commands: "Terminal Commands", // Tiêu đề phần lệnh (có thể đổi thành "Mã nguồn", "Từ vựng", v.v.)
-    exercises: "Thực hành Lab", // Tiêu đề phần bài tập
-    exerciseComplete: "Hoàn thành thử thách",
+    status: "Sẵn sàng học",
+    commands: "Khái niệm / Lệnh / API mạng",
+    exercises: "Bài thực hành từng bước",
+    exerciseComplete: "Đánh dấu đã hoàn thành",
     exerciseCompleted: "Đã hoàn thành",
-    quizzes: "Kiểm tra kiến thức",
+    quizzes: "Câu hỏi ôn tập",
     quizCheck: "Kiểm tra đáp án",
-    quizCorrect: "Chính xác!",
-    quizIncorrect: "Chưa đúng rồi.",
+    quizCorrect: "Chính xác! Bạn đang tiến bộ rất tốt.",
+    quizIncorrect: "Chưa đúng, nhưng không sao. Xem lại giải thích và thử lại nhé.",
   },
 
-  // Cảnh báo ở cuối trang (Có thể tắt nếu học môn khác không cần cảnh báo)
+  // Cảnh báo / ghi chú ở cuối trang
   warning: {
     enabled: true,
-    title: "An toàn là trên hết",
-    message: "Mọi hành động tấn công mạng không có sự cho phép là vi phạm pháp luật. CyberLab 100 chỉ phục vụ mục đích giáo dục và nghiên cứu trong môi trường Lab ảo cô lập."
+    title: "Học đúng cách để đi xa",
+    message:
+      "Môn Lập trình mạng máy tính cần học từ gốc thật chắc: hiểu cách máy tính giao tiếp, cách client-server hoạt động, cách dữ liệu được gửi và nhận. Hãy ưu tiên hiểu bản chất trước khi code, vì đó là con đường nhanh nhất để trở thành kỹ sư giỏi thật sự."
   },
 
-  // Hàm lấy icon cho từng thể loại bài học (category)
+  // Icon cho từng loại bài học
   getCategoryIcon: (category: string): React.ReactNode => {
     switch (category) {
-      case 'Theory': return React.createElement(BookOpen, { size: 14 });
-      case 'Practice': return React.createElement(Code, { size: 14 });
-      case 'Lab': return React.createElement(Monitor, { size: 14 });
-      case 'Assembly': return React.createElement(Cpu, { size: 14 });
-      default: return React.createElement(BookOpen, { size: 14 });
+      case 'Theory':
+        return React.createElement(BookOpen, { size: 14 });
+
+      case 'Socket Programming':
+        return React.createElement(Code, { size: 14 });
+
+      case 'Client-Server':
+        return React.createElement(Server, { size: 14 });
+
+      case 'Protocol':
+        return React.createElement(Radio, { size: 14 });
+
+      case 'Network Security':
+        return React.createElement(Shield, { size: 14 });
+
+      default:
+        return React.createElement(BookOpen, { size: 14 });
     }
   }
 };
