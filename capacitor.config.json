@@ -1,6 +1,6 @@
 {
-  "appId": "com.TontonYuta.cyberLab",
-  "appName": "CyberLab",
+  "appId": "com.TontonYuta.Network",
+  "appName": "Network",
   "webDir": "dist",
   "bundledWebRuntime": false
 }

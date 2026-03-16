@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">CyberLab</string>
-    <string name="title_activity_main">CyberLab</string>
-    <string name="package_name">com.TontonYuta.cyberLab</string>
-    <string name="custom_url_scheme">com.TontonYuta.cyberLab</string>
+    <string name="app_name">Network</string>
+    <string name="title_activity_main">Network</string>
+    <string name="package_name">com.TontonYuta.Network</string>
+    <string name="custom_url_scheme">com.TontonYuta.Network</string>
 </resources>

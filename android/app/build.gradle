@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "com.TontonYuta.cyberLab"
+    namespace = "com.TontonYuta.Network"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.TontonYuta.cyberLab"
+        applicationId "com.TontonYuta.Network"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
